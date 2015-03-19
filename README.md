@@ -19,7 +19,7 @@ Installation
 Add this line to your application's Gemfile
 
 ````
-gem 'secure-permissions', :git => 'centic@puppet.centic.dk:repos/centic/secure-permissions.git'
+gem 'capistrano-secure-permissions', :git => 'centic@puppet.centic.dk:repos/centic/capistrano-secure-permissions.git'
 ````
 
 
