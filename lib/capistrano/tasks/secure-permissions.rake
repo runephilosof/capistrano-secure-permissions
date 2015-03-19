@@ -2,6 +2,8 @@ namespace :deploy do
   desc 'Secure app with file permissions'
   task :secure_permissions do
     on roles(:all) do
+      web_user = fetch(:web_user)
+      app_user = fetch(:app_user)
       execute :setfacl, "-m", "u:www-data:x", "#{release_path}", "#{shared_path}", "#{shared_path}/public"
       execute :setfacl, '--logical', '--recursive', '-m', "u:#{web_user}:rX,d:u:#{web_user}:rX,u:#{app_user}:rwX,d:u:#{app_user}:rwX", "#{release_path}/public"
       execute :setfacl, '--logical', '--recursive', '-m', "d:u:#{app_user}:rX,u:#{app_user}:rX", "#{release_path}", "#{shared_path}"
