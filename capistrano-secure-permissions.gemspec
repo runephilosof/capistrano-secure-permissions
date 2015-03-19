@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
     "README.rdoc",
     "Rakefile",
     "VERSION",
+    "capistrano-secure-permissions.gemspec",
     "lib/capistrano/secure-permissions.rb",
     "lib/capistrano/tasks/secure-permissions.rake",
     "lib/secure-permissions.rb"
