@@ -1,10 +1,10 @@
 namespace :deploy do
   desc 'Secure app with file permissions'
   task :secure_permissions do
-    on roles(:all) do
+    on roles(:all) do |server|
       web_user = fetch(:web_user)
       app_user = fetch(:app_user)
-      deploy_user = fetch(:user)
+      deploy_user = server.user
 
       # Set parent folders accessable by web_user.
       execute :setfacl, "-m", "u:#{web_user}:x", "#{release_path}", "#{shared_path}", "#{shared_path}/public"
