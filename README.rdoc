@@ -17,7 +17,7 @@ The `web_user` is the one serving the static files (what apache, nginx, ... is r
 Add this line to your application's Gemfile
 
 ````
-gem 'capistrano-secure-permissions', :git => 'centic@puppet.centic.dk:repos/centic/capistrano-secure-permissions.git'
+gem 'capistrano-secure-permissions'
 ````
 
 
