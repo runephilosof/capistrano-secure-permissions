@@ -30,14 +30,16 @@ namespace :secure_permissions do
 
   desc 'Sets permissions on the public folder, only needs to be done once, not on every deploy. And there might be a lot of files, so it might take a while.'
   task :setup do
-    web_user = fetch(:web_user)
-    app_user = fetch(:app_user)
-    deploy_user = server.user
+    on roles(:app) do |server|
+      web_user = fetch(:web_user)
+      app_user = fetch(:app_user)
+      deploy_user = server.user
 
-    # Set permissions for files in public, readable by web_user and writable by app_user.
-    execute :find, '-L', "#{release_path}/public", '-user', deploy_user, '-not', '-type', 'l', '-print0', '|', 'xargs', '-0', '--no-run-if-empty', 'setfacl', '-m', "u:#{web_user}:rX,u:#{app_user}:rwX"
-    # Set defaults for directories in public (that is permissions for new files made by the app).
-    execute :find, "#{shared_path}/public", '-user', deploy_user, '-type', 'd', '-print0', '|', 'xargs', '-0', '--no-run-if-empty', 'setfacl', '-m', "d:u:#{web_user}:rX,d:u:#{app_user}:rwX"
+      # Set permissions for files in public, readable by web_user and writable by app_user.
+      execute :find, '-L', "#{release_path}/public", '-user', deploy_user, '-not', '-type', 'l', '-print0', '|', 'xargs', '-0', '--no-run-if-empty', 'setfacl', '-m', "u:#{web_user}:rX,u:#{app_user}:rwX"
+      # Set defaults for directories in public (that is permissions for new files made by the app).
+      execute :find, "#{shared_path}/public", '-user', deploy_user, '-type', 'd', '-print0', '|', 'xargs', '-0', '--no-run-if-empty', 'setfacl', '-m', "d:u:#{web_user}:rX,d:u:#{app_user}:rwX"
+    end
   end
 end
 
