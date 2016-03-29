@@ -1,7 +1,7 @@
 namespace :deploy do
   desc 'Secure app with file permissions'
   task :secure_permissions do
-    on roles(:all) do |server|
+    on roles(:app) do |server|
       web_user = fetch(:web_user)
       app_user = fetch(:app_user)
       deploy_user = server.user
@@ -20,7 +20,7 @@ end
 
 namespace :secure_permissions do
   task :validate do
-    on roles(:all) do
+    on roles(:app) do
       if fetch(:app_user).nil?
         error "secure_permissions: app_user is not set"
         exit 1
