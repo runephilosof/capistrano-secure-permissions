@@ -13,7 +13,7 @@ namespace :deploy do
         shared_path,
       ]
       parent_folders << "#{shared_path}/public" if linked_dirs.any? { |d| d.start_with?('public') }
-      execute :setfacl, "-m", "u:#{web_user}:x", *parent_folders
+      execute :setfacl, "-m", "u:#{web_user}:x,u:#{deploy_user}:rx", *parent_folders
       # Set all except public, tmp, and log readable by app_user.
       execute :find, release_path, '-regex', '\./\(public\|tmp\|log\)', '-prune', '-o', '-user', deploy_user, '-print0', '|', 'xargs', '-0', '--no-run-if-empty', 'setfacl', '-m', "u:#{app_user}:rX"
       # Set log and tmp writable by app_user.
