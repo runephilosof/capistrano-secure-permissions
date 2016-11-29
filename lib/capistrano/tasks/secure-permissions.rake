@@ -34,19 +34,22 @@ namespace :secure_permissions do
       # Public is writable by app_user by default, so exclude that one.
       # To avoid going through the files twice.
       writable_dirs = fetch(:writable_dirs, fetch(:linked_dirs)).
-        reject { |dir| dir.start_with?('public/') }.
-        map { |dir| shared_path.join(dir) }
+        reject { |dir| dir.start_with?('public/') }
       # All of shared readable by app_user.
-      readable_dirs = shared_path.children().map(&:basename) - writable_dirs
+      # Try to subtract the writable_dirs, to avoid going through them twice.
+      # But won't subtract public/system for instance... :(
+      readable_dirs = within(shared_path) { capture(:ls, '-A').lines.map(&:chomp) } - writable_dirs
 
       execute :setfacl, '-m', "u:#{web_user}:x,d:u:#{web_user}:x,u:#{app_user}:rx,d:u:#{app_user}:rx", shared_path
-      execute :setfacl, '-R', '-m', "u:#{app_user}:rx,d:u:#{app_user}:rx", *readable_dirs
-      # Set permissions for files in public, readable by web_user and writable by app_user.
-      # Also make sure that deploy_user retains access, to the files that app_user creates.
-      execute :setfacl, '-R', '-m', "u:#{web_user}:rx,u:#{app_user}:rwx,u:#{deploy_user}:rwx,d:u:#{deploy_user}:rwx,d:u:#{web_user}:rx,d:u:#{app_user}:rwx", shared_path.join('public')
-      # Allow app_user access to writable_dirs in shared
-      # Also make sure that deploy_user retains access, to the files that app_user creates.
-      execute :setfacl, '-R', '-m', "u:#{app_user}:rwx,d:u:#{app_user}:rwx", *writable_dirs
+      within shared_path do
+        execute :setfacl, '-R', '-m', "u:#{app_user}:rx,d:u:#{app_user}:rx", *readable_dirs
+        # Set permissions for files in public, readable by web_user and writable by app_user.
+        # Also make sure that deploy_user retains access, to the files that app_user creates.
+        execute :setfacl, '-R', '-m', "u:#{web_user}:rx,u:#{app_user}:rwx,u:#{deploy_user}:rwx,d:u:#{deploy_user}:rwx,d:u:#{web_user}:rx,d:u:#{app_user}:rwx", 'public'
+        # Allow app_user access to writable_dirs in shared
+        # Also make sure that deploy_user retains access, to the files that app_user creates.
+        execute :setfacl, '-R', '-m', "u:#{app_user}:rwx,d:u:#{app_user}:rwx", *writable_dirs
+      end
     end
   end
 end
