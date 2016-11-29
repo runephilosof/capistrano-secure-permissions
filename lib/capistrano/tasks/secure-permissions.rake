@@ -34,8 +34,8 @@ namespace :secure_permissions do
       # Public is writable by app_user by default, so exclude that one.
       # To avoid going through the files twice.
       writable_dirs = fetch(:writable_dirs, fetch(:linked_dirs)).
-        map { |dir| shared_path.join(dir) }.
-        delete_if { |dir| dir.start_with?('public/') }
+        reject { |dir| dir.start_with?('public/') }.
+        map { |dir| shared_path.join(dir) }
       # All of shared readable by app_user.
       readable_dirs = shared_path.children().map(&:basename) - writable_dirs
 
