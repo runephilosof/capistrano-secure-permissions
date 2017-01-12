@@ -4,6 +4,7 @@ namespace :deploy do
     on roles(:app) do |server|
       web_user = fetch(:web_user)
       app_user = fetch(:app_user)
+      deploy_user = server.user
 
       execute :setfacl, '-m', "u:#{web_user}:x", release_path
       # This is before symlinking, so we can do this recursively.
