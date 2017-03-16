@@ -10,8 +10,6 @@ namespace :deploy do
       # This is before symlinking, so we can do this recursively.
       execute :setfacl, '-R', '-m', "u:#{web_user}:rx,d:u:#{web_user}:rx", release_path.join('public')
       execute :setfacl, '-R', '-m', "u:#{app_user}:rx,d:u:#{app_user}:rx", release_path
-      # Make sure that app_user has write access to the tmp dir and that the deploy user retains access to delete tmp dir (for cleaning up old deploys).
-      execute :setfacl, '-R', '-m', "u:#{app_user}:rwx,d:u:#{app_user}:rwx,u:#{deploy_user}:rwx,d:u:#{deploy_user}:rwx", release_path.join('tmp')
     end
   end
 
