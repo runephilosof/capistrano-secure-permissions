@@ -19,7 +19,7 @@ end
 namespace :secure_permissions do
   task :validate do
     on roles(:app) do
-      if fetch(:app_user).nil?
+      if fetch(:app_user).nil? || fetch(:app_user).empty?
         error "secure_permissions: app_user is not set"
         exit 1
       end
